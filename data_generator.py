@@ -19,11 +19,11 @@ class DataGenerator(object):
             self.size_training = len(self.list_training)
 
         if path_list_eval != None:
-            self.list_validation = read_image_list(path_list_eval, prefix=None)
-            self.size_validation = len(self.list_validation)
+            self.list_test = read_image_list(path_list_eval, prefix=None)
+            self.size_validation = len(self.list_test)
 
     def get_data(self):
-        return (self._get_list(self.list_training), self._get_list(self.list_validation))
+        return (self._get_list(self.list_training), self._get_list(self.list_test))
 
     def _get_list(self, input_list):
 
@@ -45,6 +45,9 @@ class DataGenerator(object):
             mask_path = image_path.replace("images","labels")
             input_img = cv2.imread(image_path, 0)
             mask_img = cv2.imread(mask_path, 0)
+
+            input_img = input_img / 255.0
+            mask_img = mask_img / 255.0
 
             imgs.append(input_img)
             masks.append(mask_img)

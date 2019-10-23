@@ -45,11 +45,8 @@ def spatial_transformer_network(input_fmap, theta, out_dims=None, **kwargs):
     W = tf.shape(input_fmap)[2]
     C = tf.shape(input_fmap)[3]
 
-    print("Shape of theta", theta)
     # pad theta to a 3x3 transform matrix
     theta = pad_theta(theta)
-    print("Shape after ", theta)
-    print("-------------")
     # reshape theta to (B, 3, 3)
     B = 1
     theta = tf.reshape(theta, [B, 3, 3])

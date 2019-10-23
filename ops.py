@@ -139,13 +139,28 @@ def batch_norm(x, is_training=True, scope='batch_norm'):
 
 from transformer import spatial_transformer_network as stn
 def classification_loss(labels, theta, org) :
+
     logits = stn(org, theta)
+
+    print(tf.shape(org))
+    print(tf.shape(logits))
+    print(tf.shape(labels))
 
     n_class = 1
     flat_logits = tf.reshape(logits, [-1, n_class])
     flat_labels = tf.reshape(labels, [-1, n_class])
 
+    print("------")
+    print(tf.shape(flat_logits))
+    print(tf.shape(flat_labels))
+
     loss = tf.losses.mean_squared_error(flat_labels[0], flat_logits[0])
+
+    flat_logits = tf.multiply(flat_logits, 255.0)
+    flat_labels = tf.multiply(flat_labels, 255.0)
+
+    flat_logits = tf.dtypes.cast(flat_logits, dtype=tf.int32)
+    flat_labels = tf.dtypes.cast(flat_labels, dtype=tf.int32)
 
     # accuracy, update_op = tf.metrics.accuracy(labels=flat_labels[0],
     #                                       predictions=flat_logits[0])
