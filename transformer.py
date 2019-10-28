@@ -40,15 +40,19 @@ def spatial_transformer_network(input_fmap, theta, out_dims=None, **kwargs):
 
     """
     # grab input dimensions
-    B = tf.shape(input_fmap)[0]
-    H = tf.shape(input_fmap)[1]
-    W = tf.shape(input_fmap)[2]
-    C = tf.shape(input_fmap)[3]
+    # B = tf.shape(input_fmap)[0]
+    # H = tf.shape(input_fmap)[1]
+    # W = tf.shape(input_fmap)[2]
+    # C = tf.shape(input_fmap)[3]
+
+    B = input_fmap.get_shape().as_list()[0]
+    H = input_fmap.get_shape().as_list()[1]
+    W = input_fmap.get_shape().as_list()[2]
+    C = input_fmap.get_shape().as_list()[3]
 
     # pad theta to a 3x3 transform matrix
     theta = pad_theta(theta)
     # reshape theta to (B, 3, 3)
-    B = 1
     theta = tf.reshape(theta, [B, 3, 3])
 
     # generate grids of same size or upsample/downsample if specified
