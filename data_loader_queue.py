@@ -104,7 +104,7 @@ class DataGenerator(object):
             new_masks = []
 
             while len(imgs) < batch_size:
-                shuffle(input_list)
+                # shuffle(input_list)
                 image_path = input_list[index]
                 mask_path = image_path.replace("images", "labels")
                 print(image_path)
