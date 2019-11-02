@@ -88,7 +88,6 @@ class ResNet(object):
 
             x, self.stn_theta = spatial_transformer_layer("stn_0", input_tensor=x, img_size=[W, H], kernel_size=[3, 3, C, 100])
 
-            #
             # # Add spatial transformer
             # with tf.variable_scope('spatial_transformer_0'):
             #     n_fc = 9
@@ -123,7 +122,8 @@ class ResNet(object):
         self.train_logits = self.network(self.train_inptus)
         # self.test_logits = self.network(self.test_inptus, is_training=False, reuse=True)
 
-        self.train_loss = classification_loss(labels=self.train_labels, theta=self.stn_theta, org=self.train_inptus)
+        # self.train_loss = classification_loss(labels=self.train_labels, theta=self.stn_theta, org=self.train_inptus)
+        self.train_loss = focal_loss(self.train_labels, theta=self.stn_theta, org=self.train_inptus)
         # self.test_loss = classification_loss(labels=self.test_labels, theta=self.stn_theta, org=self.test_inptus)
         
         reg_loss = tf.losses.get_regularization_loss()
@@ -208,6 +208,9 @@ class ResNet(object):
                 # update network
                 _, train_loss= self.sess.run(
                     [self.optim,  self.train_loss], feed_dict=train_feed_dict)
+
+                print("Loss", train_loss)
+
                 # self.writer.add_summary(summary_str, counter)
                 if min_loss >= train_loss:
                     min_loss = train_loss

@@ -9,7 +9,6 @@ def parse_args():
     parser.add_argument('--phase', type=str, default='train', help='train or test ?')
     parser.add_argument('--dataset', type=str, default='other')
 
-
     parser.add_argument('--epoch', type=int, default=50, help='The number of epochs to run')
     parser.add_argument('--batch_size', type=int, default=2, help='The size of batch per gpu')
     parser.add_argument('--res_n', type=int, default=18, help='18, 34, 50, 101, 152')

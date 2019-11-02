@@ -23,6 +23,7 @@ wheels/
 checkpoint/
 checkpoints/
 logs/
+debug/
 *.egg-info/
 .installed.cfg
 *.egg

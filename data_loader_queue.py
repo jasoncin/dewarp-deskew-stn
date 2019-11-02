@@ -12,6 +12,7 @@ from scipy import misc
 
 from util.path_util import read_image_list
 
+
 class DataGenerator(object):
     """
 
@@ -96,64 +97,77 @@ class DataGenerator(object):
         index = 0
         max_height = 0
         max_width = 0
-        if name is 'training':
-            imgs = []
-            new_imgs = []
+        if name is 'validation':
+            input_list = self.list_validation
 
-            masks = []
-            new_masks = []
+        imgs = []
+        new_imgs = []
 
-            while len(imgs) < batch_size:
-                # shuffle(input_list)
-                image_path = input_list[index]
-                mask_path = image_path.replace("images", "labels")
-                print(image_path)
-                print(mask_path)
-                input_img = cv2.imread(image_path, 0)
-                mask_img = cv2.imread(mask_path, 0)
+        masks = []
+        new_masks = []
 
-                input_img = input_img / 255.0
-                mask_img = mask_img / 255.0
+        print('batch_size' , batch_size)
+        while len(imgs) < batch_size:
+            shuffle(input_list)
+            image_path = input_list[index]
+            mask_path = image_path.replace("images", "labels")
+            # print(image_path)
+            # print(mask_path)
+            input_img = cv2.imread(image_path, 0)
+            mask_img = cv2.imread(mask_path, 0)
 
-                imgs.append(input_img)
-                masks.append(mask_img)
+            input_img = input_img / 255.0
+            mask_img = mask_img / 255.0
 
-                max_width = max(input_img.shape[1], max_width)
-                max_width = max(mask_img.shape[1], max_width)
-                max_height = max(input_img.shape[0], max_height)
-                max_height = max(mask_img.shape[0], max_height)
+            input_img = (input_img >= 0.5) * input_img
+            mask_img = (mask_img >= 0.5) * input_img
+
+            input_img = 1 - input_img
+            mask_img = 1 - mask_img
+
+            imgs.append(input_img)
+            masks.append(mask_img)
+
+            max_width = max(input_img.shape[1], max_width)
+            max_width = max(mask_img.shape[1], max_width)
+            max_height = max(input_img.shape[0], max_height)
+            max_height = max(mask_img.shape[0], max_height)
 
             max_width = max(max_width, max_height)
             max_height = max(max_width, max_height)
 
-            for img in imgs:
-                height = img.shape[0]
-                pad_h = max_height - height
+        for img in imgs:
+            height = img.shape[0]
+            pad_h = max_height - height
 
-                width = img.shape[1]
-                pad_w = max_width - width
+            width = img.shape[1]
+            pad_w = max_width - width
 
-                if pad_h + pad_w > 0:
-                    npad = ((0, pad_h), (0, pad_w))
-                    img = np.pad(img, npad, mode='constant', constant_values=255)
-                    img = self.resize_image(img, self.img_width / img.shape[1], self.img_height / img.shape[0])
+            if pad_h + pad_w > 0:
+                npad = ((0, pad_h), (0, pad_w))
+                img = np.pad(img, npad, mode='constant', constant_values=0)
+                img = self.resize_image(img, self.img_width / img.shape[1], self.img_height / img.shape[0])
 
-                new_imgs.append(np.expand_dims(img, 2))
+                # cv2.imshow("Img", img)
+                # cv2.waitKey(0)
 
-            for mask in masks:
-                height = mask.shape[0]
-                pad_h = max_height - height
+            new_imgs.append(np.expand_dims(img, 2))
 
-                width = mask.shape[1]
-                pad_w = max_width - width
+        for mask in masks:
+            height = mask.shape[0]
+            pad_h = max_height - height
 
-                if pad_h + pad_w > 0:
-                    npad = ((0, pad_h), (0, pad_w))
-                    mask = np.pad(mask, npad, mode='constant', constant_values=255)
-                    mask = self.resize_image(mask, self.img_width / mask.shape[1], self.img_height / mask.shape[0])
+            width = mask.shape[1]
+            pad_w = max_width - width
 
-                new_masks.append(np.expand_dims(mask, 2))
-            return new_imgs, new_masks
+            if pad_h + pad_w > 0:
+                npad = ((0, pad_h), (0, pad_w))
+                mask = np.pad(mask, npad, mode='constant', constant_values=0)
+                mask = self.resize_image(mask, self.img_width / mask.shape[1], self.img_height / mask.shape[0])
+
+
+            new_masks.append(np.expand_dims(mask, 2))
+        return new_imgs, new_masks
 
     def next_data(self, name):
         """

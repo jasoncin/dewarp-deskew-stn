@@ -55,6 +55,7 @@ def spatial_transformer_network(input_fmap, theta, out_dims=None, **kwargs):
     # reshape theta to (B, 3, 3)
     theta = tf.reshape(theta, [B, 3, 3])
 
+    print("shape of theta", theta.get_shape().as_list())
     # generate grids of same size or upsample/downsample if specified
     if out_dims:
         out_H = out_dims[0]
